@@ -83,8 +83,9 @@ class SearchableCardList extends Component {
       );
     }
 
-    const lightColor = '#E2E8ED';
-    const darkColor = '#3A3E42';
+    const lightColor = 'rgba(219, 227, 232, 1.0)';
+    const darkColor = `rgba(43, 47, 51, 1.0)`;
+    const alpha = '0.3';
 
     return (
       <View style={{ flex: 1, overflow: 'hidden', backgroundColor: 'black' }}>
@@ -109,7 +110,11 @@ class SearchableCardList extends Component {
               {/* <Avatar rounded source={{ uri: item.imageUrl }} /> */}
 
               <ListItem.Content style={{}}>
-                <ListItem.Title style={{ color: item.side == 'Light' ? darkColor : lightColor, fontWeight: 'bold' }}>
+                <ListItem.Title style={{
+                  backgroundColor: item.side == 'Light' ? lightColor.replace('1.0', alpha) : darkColor.replace('1.0', alpha),
+                  color: item.side == 'Light' ? darkColor : lightColor,
+                  fontWeight: 'bold'
+                }}>
                   {`${item.displayTitle}`}
                 </ListItem.Title>
                 <ListItem.Subtitle style={{ color: item.side == 'Light' ? darkColor : lightColor }}>
