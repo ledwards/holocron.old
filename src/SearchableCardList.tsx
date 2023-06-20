@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ActivityIndicator, Image, Alert, Modal, Pressable } from 'react-native';
-
-import { ListItem, SearchBar } from 'react-native-elements';
+import { View, FlatList, ActivityIndicator, Modal, Pressable } from 'react-native';
+import { SearchBar } from 'react-native-elements';
+import FastImage from 'react-native-fast-image'
+import CardListItem from './components/CardListItem'
 
 import Card from './models/Card'
 import darkCards from '../data/Dark.json';
@@ -19,7 +20,7 @@ class SearchableCardList extends Component {
       currentCard: null,
     };
 
-    this.arrayholder = [];
+    this.currentCards = [];
   }
 
   componentDidMount() {
@@ -39,7 +40,7 @@ class SearchableCardList extends Component {
       error: null,
       loading: false,
     });
-    this.arrayholder = allCards;
+    this.currentCards = allCards;
   };
 
   renderSeparator = () => {
@@ -53,7 +54,7 @@ class SearchableCardList extends Component {
       value: text,
     });
 
-    const newData = this.arrayholder.filter(card => {
+    const newData = this.currentCards.filter(card => {
       const itemData = `${card.title.toLowerCase()}`;
       const textData = text.toLowerCase();
 
@@ -86,58 +87,27 @@ class SearchableCardList extends Component {
       );
     }
 
-    const lightColor = 'rgba(219, 227, 232, 1.0)';
-    const darkColor = `rgba(43, 47, 51, 1.0)`;
-    const alpha = '0.3';
+    const toggleModalForCard = (card) => {
+      return () => this.setState({ modalVisible: !this.state.modalVisible, currentCard: card });
+    }
 
     return (
       <View style={{ flex: 1, overflow: 'hidden', backgroundColor: 'black' }}>
         <FlatList
           data={this.state.data}
-          initialNumToRender={10}
-          renderItem={({ item }) => (
-            <ListItem
-              button
-              onPress={() => this.setState({ modalVisible: !this.state.modalVisible, currentCard: item })}
-              containerStyle={{ backgroundColor: item.side == 'Dark' ? darkColor : lightColor, overflow: 'hidden' }}>
-              <View style={{ position: 'absolute', top: 0, right: -60, width: '60%', height: 120, overflow: 'hidden' }}>
-                <Image
-                  source={{ uri: item.imageUrl }}
-                  style={{
-                    position: 'relative',
-                    left: -30,
-                    top: 0,
-                    width: '100%',
-                    height: '100%',
-                    resizeMode: 'cover',
-                  }}
-                />
-              </View>
-
-              <ListItem.Content style={{}}>
-                <ListItem.Title style={{
-                  backgroundColor: item.side == 'Light' ? lightColor.replace('1.0', alpha) : darkColor.replace('1.0', alpha),
-                  color: item.side == 'Light' ? darkColor : lightColor,
-                  fontWeight: 'bold'
-                }}>
-                  {`${item.displayTitle}`}
-                </ListItem.Title>
-                <ListItem.Subtitle style={{
-                  backgroundColor: item.side == 'Light' ? lightColor.replace('1.0', alpha) : darkColor.replace('1.0', alpha),
-                  color: item.side == 'Light' ? darkColor : lightColor
-                }}
-                >
-                  {`${item.displayType}${item.displaySubType ? ' - ' : ''}${item.displaySubType}\r\n`}
-                  {`${item.set} • ${item.side} • ${item.rarity}`}
-                </ListItem.Subtitle>
-              </ListItem.Content>
-
-            </ListItem>
-          )
+          renderItem={({ item }) =>
+            <CardListItem item={item} callback={toggleModalForCard(item)} />
           }
           keyExtractor={item => item.id}
           ItemSeparatorComponent={this.renderSeparator}
           ListHeaderComponent={this.renderHeader}
+
+          // Performance settings
+          initialNumToRender={10} // Reduce initial render amount
+          removeClippedSubviews={true} // Unmount components when outside of window
+          maxToRenderPerBatch={10} // Reduce number in each render batch
+          updateCellsBatchingPeriod={100} // Increase time between renders
+          windowSize={10} // Reduce the window size
         />
         <Modal
           animationType="fade"
@@ -152,7 +122,7 @@ class SearchableCardList extends Component {
           }}>
             <Pressable style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
               onPress={() => this.setState({ modalVisible: !this.state.modalVisible })}>
-              <Image
+              <FastImage
                 source={{ uri: this.state.currentCard ? this.state.currentCard.imageUrl : '' }}
                 style={{ width: '100%', aspectRatio: 0.7136, borderRadius: 15 }}
               />

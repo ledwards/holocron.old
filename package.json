@@ -14,6 +14,7 @@
     "react-native": "^0.71.10",
     "react-native-asset": "^2.1.1",
     "react-native-elements": "^3.4.3",
+    "react-native-fast-image": "^8.6.3",
     "react-native-vector-icons": "^9.2.0"
   },
   "devDependencies": {

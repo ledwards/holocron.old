@@ -18,7 +18,7 @@ class Card {
   constructor(object) {
     this.id = object.id.toString();
     this.title = object.front.title;
-    this.displayTitle = `${object.front.title.split(' / ')[0].replaceAll('<>', '◇')}${object.front.title.includes(' / ') && object.front.title.includes('(V)') ? ' (V)' : ''}`;
+    this.displayTitle = `${object.front.title.split('/')[0].replaceAll('<>', '◇')}${object.front.title.includes(' / ') && object.front.title.includes('(V)') ? ' (V)' : ''}`;
     this.sortTitle = object.front.title.replaceAll('<>', '').replaceAll('•', '');
     this.type = object.front.type;
     this.displayType = object.front.type.split(' #')[0];
