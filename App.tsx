@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native';
 import SearchableCardList from './src/SearchableCardList';
 
 const App = () => (
-  <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+  <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
     <SearchableCardList />
   </SafeAreaView>
 );

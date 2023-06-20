@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, ActivityIndicator, Image, ImageBackground } from 'react-native';
-import { ListItem, SearchBar, Avatar } from 'react-native-elements';
-import Card from './models/Card'
+import { View, Text, FlatList, ActivityIndicator, Image, Alert, Modal, Pressable } from 'react-native';
 
+import { ListItem, SearchBar } from 'react-native-elements';
+
+import Card from './models/Card'
 import darkCards from '../data/Dark.json';
 import lightCards from '../data/Light.json';
 
@@ -14,6 +15,8 @@ class SearchableCardList extends Component {
       loading: false,
       data: [],
       error: null,
+      modalVisible: false,
+      currentCard: null,
     };
 
     this.arrayholder = [];
@@ -91,8 +94,12 @@ class SearchableCardList extends Component {
       <View style={{ flex: 1, overflow: 'hidden', backgroundColor: 'black' }}>
         <FlatList
           data={this.state.data}
+          initialNumToRender={10}
           renderItem={({ item }) => (
-            <ListItem containerStyle={{ backgroundColor: item.side == 'Dark' ? darkColor : lightColor, overflow: 'hidden' }}>
+            <ListItem
+              button
+              onPress={() => this.setState({ modalVisible: !this.state.modalVisible, currentCard: item })}
+              containerStyle={{ backgroundColor: item.side == 'Dark' ? darkColor : lightColor, overflow: 'hidden' }}>
               <View style={{ position: 'absolute', top: 0, right: -60, width: '60%', height: 120, overflow: 'hidden' }}>
                 <Image
                   source={{ uri: item.imageUrl }}
@@ -107,8 +114,6 @@ class SearchableCardList extends Component {
                 />
               </View>
 
-              {/* <Avatar rounded source={{ uri: item.imageUrl }} /> */}
-
               <ListItem.Content style={{}}>
                 <ListItem.Title style={{
                   backgroundColor: item.side == 'Light' ? lightColor.replace('1.0', alpha) : darkColor.replace('1.0', alpha),
@@ -117,8 +122,13 @@ class SearchableCardList extends Component {
                 }}>
                   {`${item.displayTitle}`}
                 </ListItem.Title>
-                <ListItem.Subtitle style={{ color: item.side == 'Light' ? darkColor : lightColor }}>
-                  {`${item.type} ${item.subType ? '- ' + item.subType : ''}`}
+                <ListItem.Subtitle style={{
+                  backgroundColor: item.side == 'Light' ? lightColor.replace('1.0', alpha) : darkColor.replace('1.0', alpha),
+                  color: item.side == 'Light' ? darkColor : lightColor
+                }}
+                >
+                  {`${item.displayType}${item.displaySubType ? ' - ' : ''}${item.displaySubType}\r\n`}
+                  {`${item.set} • ${item.side} • ${item.rarity}`}
                 </ListItem.Subtitle>
               </ListItem.Content>
 
@@ -129,6 +139,26 @@ class SearchableCardList extends Component {
           ItemSeparatorComponent={this.renderSeparator}
           ListHeaderComponent={this.renderHeader}
         />
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={this.state.modalVisible}
+          style={{ alignItems: 'center', elevation: 5 }}
+          onRequestClose={() => { this.setState({ modalVisible: !this.state.modalVisible, currentCard: null }); }}>
+          <View style={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.80)',
+          }}>
+            <Pressable style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
+              onPress={() => this.setState({ modalVisible: !this.state.modalVisible })}>
+              <Image
+                source={{ uri: this.state.currentCard ? this.state.currentCard.imageUrl : '' }}
+                style={{ width: '100%', aspectRatio: 0.7136, borderRadius: 15 }}
+              />
+            </Pressable>
+          </View>
+        </Modal>
       </View>
     );
   }
