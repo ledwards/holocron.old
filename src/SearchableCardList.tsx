@@ -55,7 +55,7 @@ class SearchableCardList extends Component {
     });
 
     const newData = this.currentCards.filter(card => {
-      const itemData = `${card.title.toLowerCase()}`;
+      const itemData = `${card.sortTitle.toLowerCase()}`;
       const textData = text.toLowerCase();
 
       return itemData.indexOf(textData) > -1;
@@ -124,7 +124,11 @@ class SearchableCardList extends Component {
               onPress={() => this.setState({ modalVisible: !this.state.modalVisible })}>
               <FastImage
                 source={{ uri: this.state.currentCard ? this.state.currentCard.imageUrl : '' }}
-                style={{ width: '100%', aspectRatio: 0.7136, borderRadius: 15 }}
+                style={{
+                  width: '100%',
+                  aspectRatio: this.state.currentCard && this.state.currentCard.sideways ? 1.3937 : 0.7136,
+                  borderRadius: 15,
+                }}
               />
             </Pressable>
           </View>
